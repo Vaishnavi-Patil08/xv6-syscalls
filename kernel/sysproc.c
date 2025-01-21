@@ -6,6 +6,7 @@
 #include "spinlock.h"
 #include "proc.h"
 
+
 uint64
 sys_exit(void)
 {
@@ -91,3 +92,24 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+uint64
+sys_hello(void) {
+    printf("Hello from Kernel!\n");
+    return 0;
+}
+
+uint64 sys_getprocnum(void) {
+    return getprocnum();  
+}
+
+uint64 
+sys_info(void) {
+    int param;
+    argint(0, &param);
+    if (param< 0)  
+        return -1;
+
+    return info(param); 
+}
+

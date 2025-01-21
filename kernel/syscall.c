@@ -101,6 +101,11 @@ extern uint64 sys_unlink(void);
 extern uint64 sys_link(void);
 extern uint64 sys_mkdir(void);
 extern uint64 sys_close(void);
+extern uint64 sys_hello(void);
+extern uint64 sys_getprocnum(void);
+extern uint64 sys_info(void); 
+  
+
 
 // An array mapping syscall numbers from syscall.h
 // to the function that handles the system call.
@@ -126,6 +131,15 @@ static uint64 (*syscalls[])(void) = {
 [SYS_link]    sys_link,
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
+[SYS_hello]   sys_hello,
+[SYS_getprocnum] sys_getprocnum,
+[SYS_info]     sys_info,
+
+
+
+
+
+
 };
 
 void
@@ -135,6 +149,11 @@ syscall(void)
   struct proc *p = myproc();
 
   num = p->trapframe->a7;
+  if (num == SYS_info) {
+        acquire(&p->lock);
+        p->info_count++;  
+        release(&p->lock);
+    }
   if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
     // Use num to lookup the system call function for num, call it,
     // and store its return value in p->trapframe->a0
@@ -144,4 +163,7 @@ syscall(void)
             p->pid, p->name, num);
     p->trapframe->a0 = -1;
   }
+  // acquire(&p->lock);
+  //   p->total_syscalls++;
+  // release(&p->lock);
 }

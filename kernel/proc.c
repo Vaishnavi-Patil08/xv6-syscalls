@@ -245,7 +245,7 @@ userinit(void)
   // prepare for the very first "return" from kernel to user.
   p->trapframe->epc = 0;      // user program counter
   p->trapframe->sp = PGSIZE;  // user stack pointer
-
+  p->info_count = 0;
   safestrcpy(p->name, "initcode", sizeof(p->name));
   p->cwd = namei("/");
 
@@ -693,3 +693,75 @@ procdump(void)
     printf("\n");
   }
 }
+
+int 
+getprocnum(void) {
+    int count = 0;
+    struct proc *p;
+
+    for (p = proc; p < &proc[NPROC]; p++) {
+        acquire(&p->lock);
+        if (p->state != UNUSED)
+            count++;
+        release(&p->lock);
+    }
+
+    return count;
+}
+
+int 
+info(int param) {
+    struct proc *p = myproc(); 
+
+    if (param == 1) {
+       
+        int count = 0;
+        struct proc *proc_entry;
+
+        for (proc_entry = proc; proc_entry < &proc[NPROC]; proc_entry++) {
+            acquire(&proc_entry->lock);
+            if (proc_entry->state != UNUSED)
+                count++;
+            release(&proc_entry->lock);
+        }
+
+        return count;
+    } else if (param == 2) {
+       
+        acquire(&p->lock);
+        int count = p->info_count;
+        release(&p->lock);
+        return count;
+    }
+
+    else if(param == 3)
+    {
+        struct proc *p = myproc(); 
+    uint64 addr = 0xF000000;    
+    uint64 count = 0;
+
+    if (p->sz > addr) {
+        uint64 start = PGROUNDUP(addr);  
+        uint64 end = PGROUNDUP(p->sz);  
+        count = (end - start) / PGSIZE;
+    }
+
+    return count;
+
+    }
+
+    else if(param == 4)
+    {
+    return p->kstack;
+    }
+    // else if (param == 5) {
+    //     acquire(&p->lock);
+    //     int total = p->total_syscalls;
+    //     release(&p->lock);
+    //     return total;
+
+    // }
+
+    return -1;  
+}
+
