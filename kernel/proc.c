@@ -6,10 +6,9 @@
 #include "proc.h"
 #include "defs.h"
 
-// Extract page table indexes
-#define L2_INDEX(va) (((va) >> 30) & 0x1FF) // Level 2 index
-#define L1_INDEX(va) (((va) >> 21) & 0x1FF) // Level 1 index
-#define L0_INDEX(va) (((va) >> 12) & 0x1FF) // Level 0 index
+#define L2_INDEX(va) (((va) >> 30) & 0x1FF) 
+#define L1_INDEX(va) (((va) >> 21) & 0x1FF) 
+#define L0_INDEX(va) (((va) >> 12) & 0x1FF) 
 
 struct cpu cpus[NCPU];
 
