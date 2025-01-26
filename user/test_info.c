@@ -5,7 +5,7 @@
 int main() {
     int active_processes = info(1);
     printf("1. Number of processes in the system: %d\n", active_processes);
-    int pages = info(3);
+    int pages = info(5);
     printf("2. The number of memory pages used by the current process above the address 0xF000000: %d\n", pages);
     int kstack_addr = info(4);
     printf("3. The address of the kernel stack: 0x%x\n", kstack_addr);

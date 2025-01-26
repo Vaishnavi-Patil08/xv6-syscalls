@@ -110,3 +110,4 @@ struct proc {
 
 int getprocnum(void);   
 int info(int param);
+int memoryPages(pagetable_t pagetable, uint64 addr);

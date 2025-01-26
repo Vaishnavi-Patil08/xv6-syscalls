@@ -6,6 +6,11 @@
 #include "proc.h"
 #include "defs.h"
 
+// Extract page table indexes
+#define L2_INDEX(va) (((va) >> 30) & 0x1FF) // Level 2 index
+#define L1_INDEX(va) (((va) >> 21) & 0x1FF) // Level 1 index
+#define L0_INDEX(va) (((va) >> 12) & 0x1FF) // Level 0 index
+
 struct cpu cpus[NCPU];
 
 struct proc proc[NPROC];
@@ -762,6 +767,61 @@ info(int param) {
 
     // }
 
+    else if (param ==5 )
+    {
+      struct proc *p = myproc();
+      uint64 addr = 0xF000000; 
+    if (!p) {
+        printf("No current process!\n");
+        return 0;
+    }
+
+    int page_count = memoryPages(p->pagetable, addr);
+    return page_count;
+    }
+
     return -1;  
+}
+
+int memoryPages(pagetable_t pagetable, uint64 addr) {
+    if (!pagetable) {
+        printf("Invalid pagetable\n");
+        return 0;
+    }
+
+    int pageCount = 0;
+    int l2_start = L2_INDEX(addr);
+    int l1_start = L1_INDEX(addr);
+    int l0_start = L0_INDEX(addr);
+
+    for (int l2 = l2_start; l2 < 512; l2++) {
+        pte_t *l1_table = (pte_t *) PTE2PA(pagetable[l2]);
+        if (!(pagetable[l2] & PTE_V)) 
+          continue; 
+
+        int startL1 = 0;
+        if (l2 == l2_start) {
+            startL1 = l1_start;
+        }
+
+        for (int l1 = startL1; l1 < 512; l1++) {
+            pte_t *l0_table = (pte_t *) PTE2PA(l1_table[l1]); 
+            if (!(l1_table[l1] & PTE_V)) 
+              continue; 
+
+            int startL0 = 0;
+            if (l2 == l2_start && l1 == l1_start) {
+                startL0 = l0_start;
+            }
+
+            for (int l0 = startL0; l0 < 512; l0++) {
+                if (l0_table[l0] & PTE_V) {
+                    pageCount++;
+                }
+            }
+        }
+    }
+
+    return pageCount;
 }
 
