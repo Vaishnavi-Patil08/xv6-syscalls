@@ -105,9 +105,6 @@ struct proc {
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
   int info_count;
-  // int total_syscalls; 
-};
-
-int getprocnum(void);   
+}; 
 int info(int param);
 int memoryPages(pagetable_t pagetable, uint64 addr);

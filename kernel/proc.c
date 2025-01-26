@@ -699,21 +699,6 @@ procdump(void)
 }
 
 int 
-getprocnum(void) {
-    int count = 0;
-    struct proc *p;
-
-    for (p = proc; p < &proc[NPROC]; p++) {
-        acquire(&p->lock);
-        if (p->state != UNUSED)
-            count++;
-        release(&p->lock);
-    }
-
-    return count;
-}
-
-int 
 info(int param) {
     struct proc *p = myproc(); 
 
@@ -758,13 +743,6 @@ info(int param) {
     {
     return p->kstack;
     }
-    // else if (param == 5) {
-    //     acquire(&p->lock);
-    //     int total = p->total_syscalls;
-    //     release(&p->lock);
-    //     return total;
-
-    // }
 
     else if (param ==5 )
     {
