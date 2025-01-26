@@ -725,26 +725,10 @@ info(int param) {
 
     else if(param == 3)
     {
-        struct proc *p = myproc(); 
-    uint64 addr = 0xF000000;    
-    uint64 count = 0;
-
-    if (p->sz > addr) {
-        uint64 start = PGROUNDUP(addr);  
-        uint64 end = PGROUNDUP(p->sz);  
-        count = (end - start) / PGSIZE;
-    }
-
-    return count;
-
-    }
-
-    else if(param == 4)
-    {
     return p->kstack;
     }
 
-    else if (param ==5 )
+    else if (param == 4 )
     {
       struct proc *p = myproc();
       uint64 addr = 0xF000000; 
